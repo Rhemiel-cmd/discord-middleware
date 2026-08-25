@@ -2,6 +2,11 @@ require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const axios = require('axios');
 
+// --- EXPRESS SETUP ---
+const express = require('express');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -40,3 +45,12 @@ client.on('messageCreate', async (message) => {
 });
 
 client.login(process.env.DISCORD_TOKEN);
+
+// --- HEALTH CHECK ROUTE FOR CRON-JOB / RENDER ---
+app.get('/', (req, res) => {
+  res.status(200).send('Middleware Bot is Active and Running!');
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Web server listening on port ${PORT}`);
+});
