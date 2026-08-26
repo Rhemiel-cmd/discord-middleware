@@ -23,13 +23,20 @@ client.on('messageCreate', async (message) => {
   // 1. Iwas infinite loop: Huwag pansinin kapag bot ang nag-send
   if (message.author.bot) return;
 
+  // 2. RESTRICTION 1: Specific Channel ID lang (Palitan ang ID sa ibaba)
+  const TARGET_CHANNEL_ID = '1532713853992046682'; // <- I-paste dito ang Channel ID mo
+  if (message.channel.id !== TARGET_CHANNEL_ID) return;
+
+  // 3. RESTRICTION 2: Dapat NAKA-MENTION ang Bot
+  if (!message.mentions.has(client.user.id)) return;
+
   try {
-    // 💬 PAGPAPAKITA NG "TYPING..." STATUS SA DISCORD
+    // 💬 MAGTIGIL AT MAG-PAKITA NG "TYPING..." SA DISCORD
     await message.channel.sendTyping();
 
-    console.log(`📩 Message received from ${message.author.username}: "${message.content}"`);
+    console.log(`📩 Valid mention received from ${message.author.username}: "${message.content}"`);
 
-    // 2. I-forward ang data papunta sa n8n Webhook
+    // 4. I-forward ang data papunta sa n8n Webhook
     await axios.post(process.env.N8N_WEBHOOK_URL, {
       content: message.content,
       author: {
